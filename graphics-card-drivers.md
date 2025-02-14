@@ -10,7 +10,7 @@ sudo pacman -S nvidia-utils lib32-nvidia-utils
 
 Install packages (official repository)
 ```
-pacman -S brave-browser chromium git steam gamemode mangohud wine-staging
+pacman -S chromium git steam gamemode mangohud wine-staging
 ```
 
 Install Yay - AUR Helper (community repository)
