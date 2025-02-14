@@ -91,7 +91,7 @@ install_nvidia_drivers() {
 # Install additional packages
 install_additional_packages() {
     echo "Installing additional packages..."
-    sudo pacman -S --noconfirm brave-browser chromium git steam gamemode mangohud wine-staging
+    sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
     yay -S --noconfirm goverlay
 }
 
