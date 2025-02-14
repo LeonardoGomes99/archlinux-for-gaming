@@ -112,7 +112,8 @@ install_docker() {
         sudo groupadd -f docker
         sudo usermod -aG docker $USER
         sudo systemctl enable docker
-        sudo systemctl start docker
+        sudo systemctl start 
+        newgrp docker
         echo "Docker installed. Please log out and back in to apply group changes."
     else
         echo "Docker is already installed."
