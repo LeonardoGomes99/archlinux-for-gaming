@@ -67,6 +67,13 @@ install_yay() {
     fi
 }
 
+# Install additional packages
+install_additional_packages() {
+    echo "Installing additional packages..."
+    sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
+    yay -S --noconfirm goverlay brave-bin
+}
+
 # Install NVIDIA drivers if an NVIDIA GPU is detected
 install_nvidia_drivers() {
     if lspci | grep -i nvidia; then
@@ -75,13 +82,6 @@ install_nvidia_drivers() {
     else
         echo "No NVIDIA GPU detected. Skipping driver installation."
     fi
-}
-
-# Install additional packages
-install_additional_packages() {
-    echo "Installing additional packages..."
-    sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
-    yay -S --noconfirm goverlay brave-bin
 }
 
 # Install Zsh and Oh My Zsh
@@ -147,10 +147,10 @@ install_nodejs() {
 }
 
 # Install KDE Plasma and configure it
-install_kde_plasma() {
-    echo "Installing KDE Plasma..."
+install_kde_and_disable() {
+    echo "Installing KDE Plasma and ly..."
     sudo pacman -S --noconfirm plasma
-
+    
     echo "Disabling Baloo Indexing..."
     if command_exists balooctl; then
         balooctl suspend
@@ -161,16 +161,10 @@ install_kde_plasma() {
     fi
 }
 
-# Install and enable ly (Display Manager) as the final step
-install_ly() {
-    if ! systemctl is-enabled ly &> /dev/null; then
-        echo "Installing and enabling ly display manager..."
-        yay -S --noconfirm ly
-        sudo systemctl enable ly
-        sudo systemctl start ly
-    else
-        echo "ly is already installed and enabled."
-    fi
+install_ly(){
+    yay -S --noconfirm ly
+    sudo systemctl enable ly
+    sudo systemctl start ly
 }
 
 # Main function to run all steps
@@ -179,14 +173,11 @@ main() {
     enable_multilib
     update_and_install_packages
     install_yay
-    install_nvidia_drivers
     install_additional_packages
-    #install_zsh_and_ohmyzsh
+    install_nvidia_drivers
     install_docker
     install_nodejs
-    install_kde_plasma
-
-    # Install and enable ly as the very last step
+    install_kde_and_disable
     install_ly
 
     echo "All tools installed and configured!"

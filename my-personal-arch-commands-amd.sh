@@ -53,6 +53,12 @@ install_yay() {
     fi
 }
 
+install_additional_packages() {
+    echo "Installing additional packages..."
+    sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
+    yay -S --noconfirm goverlay brave-bin
+}
+
 install_amd_drivers() {
     echo "Installing AMD drivers..."
     sudo pacman -S --noconfirm vulkan-radeon lib32-vulkan-radeon
@@ -60,25 +66,6 @@ install_amd_drivers() {
     cd ~/mesa-git
     makepkg -si --noconfirm
     cd .. && rm -rf ~/mesa-git
-}
-
-install_additional_packages() {
-    echo "Installing additional packages..."
-    sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
-    yay -S --noconfirm goverlay brave-bin
-}
-
-disable_baloo() {
-    if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]] || pgrep -x "plasmashell" > /dev/null; then
-        if command_exists balooctl; then
-            echo "KDE Plasma is running. Disabling and purging Baloo..."
-            balooctl stop
-            balooctl disable
-            balooctl purge
-        else
-            echo "Baloo is not installed. Skipping..."
-        fi
-    fi
 }
 
 install_zsh_and_ohmyzsh() {
@@ -132,9 +119,34 @@ install_nodejs() {
     fi
 }
 
-install_kde_and_ly() {
+install_kde_and_disable() {
     echo "Installing KDE Plasma and ly..."
     sudo pacman -S --noconfirm plasma
+    
+    echo "Disabling Baloo Indexing..."
+    if command_exists balooctl; then
+        balooctl suspend
+        balooctl disable
+        balooctl purge
+    else
+        echo "Baloo is not installed. Skipping..."
+    fi
+}
+
+disable_baloo() {
+    if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]] || pgrep -x "plasmashell" > /dev/null; then
+        if command_exists balooctl; then
+            echo "KDE Plasma is running. Disabling and purging Baloo..."
+            balooctl stop
+            balooctl disable
+            balooctl purge
+        else
+            echo "Baloo is not installed. Skipping..."
+        fi
+    fi
+}
+
+install_ly(){
     yay -S --noconfirm ly
     sudo systemctl enable ly
     sudo systemctl start ly
@@ -145,13 +157,15 @@ main() {
     enable_multilib
     update_and_install_packages
     install_yay
-    install_amd_drivers
     install_additional_packages
-    disable_baloo
+    install_amd_drivers
     #install_zsh_and_ohmyzsh
     install_docker
     install_nodejs
-    install_kde_and_ly
+    install_kde
+    disable_baloo
+    install_ly
+
     echo "All tools installed and configured!"
 }
 
