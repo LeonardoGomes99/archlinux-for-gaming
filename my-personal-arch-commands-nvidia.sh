@@ -44,7 +44,7 @@ disable_ipv6() {
 update_and_install_packages() {
     echo "Updating system and installing packages..."
     sudo pacman -Syu --noconfirm
-    sudo pacman -S --noconfirm git vim base-devel iwd dhcpcd plasma
+    sudo pacman -S --noconfirm git vim base-devel iwd dhcpcd
 }
 
 # Install Yay (AUR helper)
@@ -67,17 +67,6 @@ install_yay() {
     fi
 }
 
-# Install and enable ly (Display Manager)
-install_ly() {
-    if ! systemctl is-enabled ly &> /dev/null; then
-        yay -S --noconfirm ly
-        sudo systemctl enable ly
-        sudo systemctl start ly
-    else
-        echo "ly is already installed and enabled."
-    fi
-}
-
 # Install NVIDIA drivers if an NVIDIA GPU is detected
 install_nvidia_drivers() {
     if lspci | grep -i nvidia; then
@@ -93,20 +82,6 @@ install_additional_packages() {
     echo "Installing additional packages..."
     sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
     yay -S --noconfirm goverlay brave-bin
-}
-
-# Disable KDE Baloo Indexing if KDE is running
-disable_baloo() {
-    if [[ "$XDG_CURRENT_DESKTOP" == *"KDE"* ]] || pgrep -x "plasmashell" > /dev/null; then
-        if command_exists balooctl; then
-            echo "KDE Plasma is running. Disabling and purging Baloo..."
-            balooctl suspend
-            balooctl disable
-            balooctl purge
-        else
-            echo "Baloo is not installed. Skipping..."
-        fi
-    fi
 }
 
 # Install Zsh and Oh My Zsh
@@ -171,19 +146,48 @@ install_nodejs() {
     fi
 }
 
+# Install KDE Plasma and configure it
+install_kde_plasma() {
+    echo "Installing KDE Plasma..."
+    sudo pacman -S --noconfirm plasma-meta kde-applications-meta
+
+    echo "Disabling Baloo Indexing..."
+    if command_exists balooctl; then
+        balooctl suspend
+        balooctl disable
+        balooctl purge
+    else
+        echo "Baloo is not installed. Skipping..."
+    fi
+}
+
+# Install and enable ly (Display Manager) as the final step
+install_ly() {
+    if ! systemctl is-enabled ly &> /dev/null; then
+        echo "Installing and enabling ly display manager..."
+        yay -S --noconfirm ly
+        sudo systemctl enable ly
+        sudo systemctl start ly
+    else
+        echo "ly is already installed and enabled."
+    fi
+}
+
 # Main function to run all steps
 main() {
     disable_ipv6
     enable_multilib
     update_and_install_packages
     install_yay
-    install_ly
     install_nvidia_drivers
     install_additional_packages
-    disable_baloo
     install_zsh_and_ohmyzsh
     install_docker
     install_nodejs
+    install_kde_plasma
+
+    # Install and enable ly as the very last step
+    install_ly
 
     echo "All tools installed and configured!"
 }
