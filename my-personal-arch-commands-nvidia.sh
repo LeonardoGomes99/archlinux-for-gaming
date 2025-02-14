@@ -149,7 +149,7 @@ install_nodejs() {
 # Install KDE Plasma and configure it
 install_kde_plasma() {
     echo "Installing KDE Plasma..."
-    sudo pacman -S --noconfirm plasma-meta kde-applications-meta
+    sudo pacman -S --noconfirm plasma
 
     echo "Disabling Baloo Indexing..."
     if command_exists balooctl; then
