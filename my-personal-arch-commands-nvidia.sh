@@ -9,6 +9,18 @@ command_exists() {
     command -v "$1" &> /dev/null
 }
 
+enable_multilib() {
+    echo "Verificando se o repositório multilib está ativado..."
+    if ! grep -q "^\[multilib\]" /etc/pacman.conf; then
+        echo "Habilitando multilib..."
+        sudo sed -i '/#\[multilib\]/s/^#//' /etc/pacman.conf
+        sudo sed -i '/#Include = \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf
+        sudo pacman -Syu --noconfirm
+    else
+        echo "O repositório multilib já está ativado."
+    fi
+}
+
 # Disable IPv6 for all interfaces and specifically for the wireless interface
 disable_ipv6() {
     echo "Disabling IPv6..."
@@ -162,6 +174,7 @@ install_nodejs() {
 # Main function to run all steps
 main() {
     disable_ipv6
+    enable_multilib
     update_and_install_packages
     install_yay
     install_ly
