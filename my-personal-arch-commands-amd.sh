@@ -85,7 +85,7 @@ install_amd_drivers() {
 install_additional_packages() {
     echo "Installing additional packages..."
     sudo pacman -S --noconfirm chromium git steam gamemode mangohud wine-staging
-    yay -S --noconfirm goverlay
+    yay -S --noconfirm goverlay brave-bin
 }
 
 # Disable KDE Baloo Indexing if KDE is running
