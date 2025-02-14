@@ -148,7 +148,7 @@ main() {
     install_amd_drivers
     install_additional_packages
     disable_baloo
-    install_zsh_and_ohmyzsh
+    #install_zsh_and_ohmyzsh
     install_docker
     install_nodejs
     install_kde_and_ly

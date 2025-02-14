@@ -181,7 +181,7 @@ main() {
     install_yay
     install_nvidia_drivers
     install_additional_packages
-    install_zsh_and_ohmyzsh
+    #install_zsh_and_ohmyzsh
     install_docker
     install_nodejs
     install_kde_plasma
